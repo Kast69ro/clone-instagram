@@ -3,11 +3,10 @@ import SendIcon from "@mui/icons-material/Send";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import TurnedInNotIcon from "@mui/icons-material/TurnedInNot";
-
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import instagramDefaultProfile from "#/icon/layout/instagramDefaultProfile.jpg";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+
 import { usePostActions } from "@/store/pages/home/post-actions/post-actions";
 import { Box, IconButton } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
@@ -19,13 +18,10 @@ import { useUser } from "@/store/pages/home/home";
 import VideoPost from "../video-post/video-post";
 import { API } from "@/utils/config";
 
-export default function Comments({
-  open,
-  setOpen,
-  postId,
-  datePublished,
-  // comments,
-}) {
+// ✅ Используем строку, если ava.jpeg находится в /public
+const instagramDefaultProfile = "/ava.jpeg";
+
+export default function Comments({ open, setOpen, postId, datePublished }) {
   const {
     postByID,
     getPostByID,
@@ -37,7 +33,7 @@ export default function Comments({
     getLikeCount,
     deleteComment,
   } = usePostActions();
-  console.log('postByID: ', postByID)
+
   const comments = postByID?.comments || [];
   const { formatShortTime } = useUser();
   const [modalComment, setModalComment] = useState(false);
@@ -47,7 +43,6 @@ export default function Comments({
   const likeCount = likeCounts[postId] || 0;
   const [idxComment, setIdxComment] = useState();
 
-  // function baroi like-hoi comment
   const toggleLikeComment = (postCommentId) => {
     setIsLikedComment((prev) => ({
       ...prev,
@@ -55,7 +50,6 @@ export default function Comments({
     }));
   };
 
-  //
   const toggleLike = () => {
     addLikePost(postId);
   };
@@ -110,7 +104,7 @@ export default function Comments({
             {postByID?.images &&
               postByID?.images?.map((media, index) =>
                 media.endsWith(".mp4") ? (
-                  <VideoPost src={`${API}/images/${media}`} />
+                  <VideoPost key={index} src={`${API}/images/${media}`} />
                 ) : (
                   <Image
                     key={index}
@@ -127,7 +121,7 @@ export default function Comments({
           {/* RIGHT: COMMENTS */}
           <Box className="w-full md:w-1/2 h-[calc(90vh-48px)] md:h-full flex flex-col bg-white p-4 overflow-y-auto relative">
             {/* Верхний блок: пользователь + меню */}
-            <div className="flex justify-between items-center pb-3 border-b border-gray-200   bg-white">
+            <div className="flex justify-between items-center pb-3 border-b border-gray-200 bg-white">
               <div className="flex items-center gap-3">
                 <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
                   <div className="bg-white rounded-full p-[3px]">
@@ -137,10 +131,10 @@ export default function Comments({
                           ? `${API}/images/${postByID.userImage}`
                           : instagramDefaultProfile
                       }
-                      alt="story"
-                      className="rounded-full object-cover h-8 w-8"
+                      alt="user"
                       width={32}
                       height={32}
+                      className="rounded-full object-cover h-8 w-8"
                     />
                   </div>
                 </div>
@@ -162,10 +156,10 @@ export default function Comments({
                           ? `${API}/images/${postByID.userImage}`
                           : instagramDefaultProfile
                       }
-                      alt="story"
-                      className="rounded-full object-cover h-8 w-8"
+                      alt="user"
                       width={32}
                       height={32}
+                      className="rounded-full object-cover h-8 w-8"
                     />
                   </div>
                 </div>
@@ -186,7 +180,6 @@ export default function Comments({
                     key={idx}
                     className="flex justify-between items-start gap-3"
                   >
-                    {/* Avatar + текст */}
                     <div className="flex items-start gap-3">
                       <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
                         <div className="bg-white rounded-full p-[2px]">
@@ -197,15 +190,15 @@ export default function Comments({
                                 : instagramDefaultProfile
                             }
                             alt="comment-user"
-                            className=" rounded-full object-cover h-8 w-8"
                             width={32}
                             height={32}
+                            className="rounded-full object-cover h-8 w-8"
                           />
                         </div>
                       </div>
 
                       <div className="flex flex-col gap-1">
-                        <div className=" flex gap-2 items-center ">
+                        <div className="flex gap-2 items-center">
                           <p className="text-sm font-semibold text-[#262626]">
                             {comment.userName}
                           </p>
@@ -215,7 +208,7 @@ export default function Comments({
                         </div>
 
                         <div className="flex gap-2 items-center">
-                          <p className="text-xs text-gray-500 mt-1 cursor-pointer ">
+                          <p className="text-xs text-gray-500 mt-1 cursor-pointer">
                             {formatShortTime(comment.dateCommented)}
                           </p>
                           <p className="text-xs text-gray-500 mt-1 cursor-pointer">
@@ -233,7 +226,6 @@ export default function Comments({
                       </div>
                     </div>
 
-                    {/* Лайк */}
                     <IconButton
                       color="error"
                       onClick={() => toggleLikeComment(comment.postCommentId)}
@@ -255,9 +247,8 @@ export default function Comments({
               )}
             </div>
 
-            {/* Пост и кнопки снизу */}
+            {/* Bottom actions */}
             <div className="sticky bottom-0 bg-white py-2 border-t border-gray-200 mt-auto">
-              {/* Иконки и лайки */}
               <div className="flex justify-between items-center mb-2">
                 <div className="flex gap-2">
                   <IconButton color="error" onClick={toggleLike}>
@@ -274,10 +265,7 @@ export default function Comments({
                     <SendIcon className="text-black" />
                   </IconButton>
                 </div>
-                <IconButton
-                  onClick={() => toggleSave(postId)}
-                  className="text-black"
-                >
+                <IconButton onClick={toggleSave} className="text-black">
                   {saved ? <BookmarkIcon /> : <TurnedInNotIcon />}
                 </IconButton>
               </div>
@@ -287,20 +275,33 @@ export default function Comments({
                   {likeCount} {likeCount === 1 ? "like" : "likes"}
                 </p>
               )}
-              <p className="text-[14px] text-gray-500 pl-1 cursor-pointer "> {formatShortTime(datePublished)} ago</p>
+              <p className="text-[14px] text-gray-500 pl-1 cursor-pointer">
+                {formatShortTime(datePublished)} ago
+              </p>
 
-              {/* Компонент ввода комментария */}
               <WriteComment postId={postId} />
             </div>
           </Box>
         </DialogContent>
       </Dialog>
+
+      {/* Модалка удаления комментария */}
       {modalComment && (
-        <div className="bg-[#4b4b4b] w-full h-full">
-          <div className="fixed top-[40%] z-4000 flex flex-col w-[400px] gap-1 bg-[#ccc] rounded-[30px] py-2  ">
-            <button onClick={delComment}>Delete</button>
+        <div className="bg-[#4b4b4b] w-full h-full fixed top-0 left-0 flex items-center justify-center z-50">
+          <div className="flex flex-col w-[400px] gap-1 bg-[#ccc] rounded-[30px] py-4 px-6">
+            <button
+              onClick={delComment}
+              className="text-red-600 font-semibold py-2"
+            >
+              Delete
+            </button>
             <hr />
-            <button onClick={() => setModalComment(false)}>Cancel</button>
+            <button
+              onClick={() => setModalComment(false)}
+              className="text-gray-700 font-medium py-2"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}

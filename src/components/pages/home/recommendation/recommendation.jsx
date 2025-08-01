@@ -1,15 +1,13 @@
+"use client";
+
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
-import instagramDefaultProfile from "#/icon/layout/instagramDefaultProfile.jpg";
 import Image from "next/image";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, Dialog, DialogContent, IconButton, InputAdornment } from "@mui/material";
 import Link from "next/link";
 import { useUser } from "@/store/pages/home/home";
 import { Fragment, useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 import CloseIcon from "@mui/icons-material/Close";
-import instagram from "#/img/pages/home/instagram.png";
-import { IconButton, InputAdornment } from "@mui/material";
+import instagram from "../../../../assets/img/pages/home/instagram.png";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import RecommendationSkeleton from "../recommendation-skeleton/recommendation-skeleton";
@@ -22,17 +20,9 @@ export default function Recommendation() {
   const [name, setName] = useState("");
   const [open, setOpen] = useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleTogglePassword = () => {
-    setShowPassword((prev) => !prev);
-  };
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleTogglePassword = () => setShowPassword((prev) => !prev);
 
   useEffect(() => {
     getUsers();
@@ -40,33 +30,29 @@ export default function Recommendation() {
 
   return (
     <div className="flex flex-col gap-5">
+      {/* Profile section */}
       <div className="flex justify-between items-center py-5">
-        <div className=" flex gap-3 items-center ">
+        <div className="flex gap-3 items-center">
           <Link href={`/profile`}>
-            <img
-              src={
-                info?.image
-                  ? `${API}/images/${info.image}`
-                  : instagramDefaultProfile
-              }
-              alt="image profil"
-              className="rounded-full w-[40px] h-[40px] object-cover"
-             
+            <Image
+              src={info?.image ? `${API}/images/${info.image}` : "/ava.jpeg"}
+              alt="profile image"
+              className="rounded-full object-cover"
+              width={40}
+              height={40}
             />
           </Link>
 
           <div className="flex flex-col gap-1">
             <Link href={`/profile`}>
-              <p className="text-sm leading-tight cursor-pointer">
-                <b>{info?.userName}</b>
+              <p className="text-sm leading-tight cursor-pointer font-bold">
+                {info?.userName}
               </p>
             </Link>
-            <p className="text-sm text-[#737373] leading-tight">
-              {info?.firstName}
-            </p>
+            <p className="text-sm text-[#737373] leading-tight">{info?.firstName}</p>
           </div>
-          
         </div>
+
         <button
           onClick={handleClickOpen}
           className="text-blue-500 text-sm font-semibold hover:underline"
@@ -75,14 +61,11 @@ export default function Recommendation() {
         </button>
       </div>
 
+      {/* Suggestions */}
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <p className="text-sm text-[#737373] font-semibold">
-            Suggested for you
-          </p>
-          <p className="text-sm text-black cursor-pointer hover:underline">
-            See All
-          </p>
+          <p className="text-sm text-[#737373] font-semibold">Suggested for you</p>
+          <p className="text-sm text-black cursor-pointer hover:underline">See All</p>
         </div>
 
         <div className="flex flex-col gap-3">
@@ -95,13 +78,9 @@ export default function Recommendation() {
                   <div className="flex gap-3 items-center">
                     <Link href={`/profile/${user.id}`}>
                       <Image
-                        src={
-                          user?.avatar
-                            ? `${API}/images/${user.avatar}`
-                            : instagramDefaultProfile
-                        }
-                        alt="image profil"
-                        className="imgStory rounded-full w-full object-cover"
+                        src={user?.avatar ? `${API}/images/${user.avatar}` : "/ava.jpeg"}
+                        alt="profile avatar"
+                        className="rounded-full object-cover"
                         width={40}
                         height={40}
                       />
@@ -110,7 +89,7 @@ export default function Recommendation() {
                     <div className="flex flex-col gap-1">
                       <Link href={`/profile/${user.id}`}>
                         <p className="text-sm font-medium hover:underline cursor-pointer">
-                          <b>{user?.userName}</b>
+                          {user?.userName}
                         </p>
                       </Link>
                       <p className="text-[13px] text-[#737373] leading-tight">
@@ -127,6 +106,7 @@ export default function Recommendation() {
         </div>
       </div>
 
+      {/* Switch Account Dialog */}
       <Fragment>
         <Dialog
           open={open}
@@ -135,20 +115,19 @@ export default function Recommendation() {
           aria-describedby="alert-dialog-description"
         >
           <DialogContent className="flex flex-col gap-5 w-[450px] h-[450px]">
-            <Box
-              onClick={handleClose}
-              className="flex justify-end cursor-pointer"
-            >
+            <Box onClick={handleClose} className="flex justify-end cursor-pointer">
               <CloseIcon />
             </Box>
+
             <Box className="flex justify-center items-center">
               <Image
                 src={instagram}
                 width={130}
                 height={70}
-                alt="image instagram"
+                alt="instagram logo"
               />
             </Box>
+
             <Box className="flex flex-col gap-4">
               <Box
                 component="form"
@@ -158,14 +137,14 @@ export default function Recommendation() {
                 className="flex flex-col"
               >
                 <TextField
-                  id="outlined-basic"
+                  id="username"
                   label="Phone number, username or email"
                   variant="outlined"
-                  value={info?.userName}
+                  value={info?.userName || name}
                   onChange={({ target }) => setName(target.value)}
                 />
                 <TextField
-                  id="outlined-basic"
+                  id="password"
                   label="Password"
                   variant="outlined"
                   type={showPassword ? "text" : "password"}
@@ -180,9 +159,10 @@ export default function Recommendation() {
                   }}
                 />
               </Box>
+
               <Box className="flex items-center gap-2 pl-2">
-                <input type="checkbox" />
-                <p>Save login info</p>
+                <input type="checkbox" id="save-login" />
+                <label htmlFor="save-login">Save login info</label>
               </Box>
 
               <Box className="flex flex-col gap-3 mx-[10px]">

@@ -6,9 +6,7 @@ import { Ellipsis } from "lucide-react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { useUser } from "@/store/pages/home/home";
-import instagramDefaultProfile from "#/icon/layout/instagramDefaultProfile.jpg";
 import PostActions from "./post-actions/post-actions";
-
 import Recommendation from "./recommendation/recommendation";
 import { Box, Dialog, DialogContent } from "@mui/material";
 import { usePostActions } from "@/store/pages/home/post-actions/post-actions";
@@ -34,11 +32,10 @@ export default function Home() {
     addStoriesPost,
   } = useStory();
 
-  const [idx, setIdx] = useState();
-  const [currentPostId, setCurrentPostId] = useState();
-  const [currentUserId, setCurrentUserId] = useState();
+  const [idx, setIdx] = useState(null);
+  const [currentPostId, setCurrentPostId] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-  // Get current user info on mount
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (!token) return;
@@ -49,13 +46,10 @@ export default function Home() {
     getPosts();
   }, []);
 
-  // Fixed follow handlers
   const handleFollow = async (followingUserId) => {
     if (!currentUserId) return;
-
     try {
       await addFollowing(followingUserId, currentUserId);
-      console.log("Successfully followed user:", followingUserId);
     } catch (error) {
       console.error("Failed to follow user:", error);
     }
@@ -63,10 +57,8 @@ export default function Home() {
 
   const handleUnfollow = async (followingUserId) => {
     if (!currentUserId) return;
-
     try {
       await deleteFollowing(followingUserId, currentUserId);
-      console.log("Successfully unfollowed user:", followingUserId);
     } catch (error) {
       console.error("Failed to unfollow user:", error);
     }
@@ -89,11 +81,12 @@ export default function Home() {
   };
 
   function handleStoriesPost(postId) {
-    addStoriesPost(postId);
-    handleClose();
+    if (postId) {
+      addStoriesPost(postId);
+      handleClose();
+    }
   }
 
-  // Check if user is followed in dialog
   const isFollowedInDialog = idx ? subscribtions.includes(idx) : false;
 
   return (
@@ -110,7 +103,6 @@ export default function Home() {
                   <PostSkeleton key={idx} />
                 ))
               : posts.map((post) => {
-                  // Check if current user follows this post's author
                   const isFollowed = subscribtions.includes(post.userId);
 
                   return (
@@ -128,9 +120,9 @@ export default function Home() {
                                     src={
                                       post.userImage
                                         ? `${API}/images/${post.userImage}`
-                                        : instagramDefaultProfile
+                                        : "/ava.jpeg"
                                     }
-                                    alt="story"
+                                    alt="profile"
                                     className="rounded-full object-cover h-[32px]"
                                     width={32}
                                     height={32}
@@ -145,30 +137,29 @@ export default function Home() {
                                   </Link>
                                 </p>
                                 <p className="text-[14px] font-medium text-[#475569] truncate">
-                                  Profil
+                                  Profile
                                 </p>
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-1 ">
-                              <p className="text-[20px] text-gray-500 cursor-pointer font-bold mt-[-10] ">
+                            <div className="flex items-center gap-1">
+                              <p className="text-[20px] text-gray-500 cursor-pointer font-bold mt-[-10px]">
                                 .
                               </p>
                               <p className="tracking-wider text-[14px] text-[#737373] font-medium">
                                 {formatShortTime(post.datePublished)}
                               </p>
-                              {/* <p className="text-[20px] text-gray-500 cursor-pointer font-bold mt-[-10] ">.</p> */}
 
-                              {/* Show Follow button only if not following and not current user's post */}
-                              {!isFollowed && post.userId !== currentUserId && (
-                                <button
-                                  onClick={() => handleFollow(post.userId)}
-                                  disabled={loading}
-                                  className="text-blue-500 font-semibold text-sm hover:text-blue-600 disabled:opacity-50"
-                                >
-                                  {loading ? "Following..." : "Follow"}
-                                </button>
-                              )}
+                              {!isFollowed &&
+                                post.userId !== currentUserId && (
+                                  <button
+                                    onClick={() => handleFollow(post.userId)}
+                                    disabled={loading}
+                                    className="text-blue-500 font-semibold text-sm hover:text-blue-600 disabled:opacity-50"
+                                  >
+                                    {loading ? "Following..." : "Follow"}
+                                  </button>
+                                )}
                             </div>
                           </div>
 
@@ -184,13 +175,11 @@ export default function Home() {
 
                         <div className="w-full sm:w-[580px]">
                           {post.images?.[0]?.endsWith(".mp4") ? (
-                            <VideoPost
-                              src={`${API}/images/${post.images[0]}`}
-                            />
+                            <VideoPost src={`${API}/images/${post.images[0]}`} />
                           ) : (
                             <Image
                               src={`${API}/images/${post.images[0]}`}
-                              alt="story"
+                              alt="post image"
                               className="w-full max-h-[600px] sm:max-h-[400px] rounded-[10px] object-cover"
                               width={580}
                               height={600}
@@ -231,15 +220,11 @@ export default function Home() {
                   Report
                 </button>
 
-                {/* Follow/Unfollow in dialog */}
                 {idx &&
                   idx !== currentUserId &&
                   (isFollowedInDialog ? (
                     <button
-                      onClick={() => {
-                        handleUnfollow(idx);
-                        // Don't close dialog immediately, let user see the change
-                      }}
+                      onClick={() => handleUnfollow(idx)}
                       disabled={loading}
                       className="font-bold text-red-500 border-b border-[#e9e8e8] pb-2 disabled:opacity-50"
                     >
@@ -247,9 +232,7 @@ export default function Home() {
                     </button>
                   ) : (
                     <button
-                      onClick={() => {
-                        handleFollow(idx);
-                      }}
+                      onClick={() => handleFollow(idx)}
                       disabled={loading}
                       className="text-blue-500 font-medium border-b border-[#e9e8e8] pb-2 disabled:opacity-50"
                     >
