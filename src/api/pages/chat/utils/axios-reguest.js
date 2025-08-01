@@ -14,4 +14,4 @@ if (token) {
 
 export const api = process.env.NEXT_PUBLIC_API;
 
-export { token, userId, api };
+export { token, userId };
