@@ -32,7 +32,7 @@ export default function ChatClient() {
         </div>
         <b className="text-[20px]">Ваши сообщения</b>
         <p className="text-[gray]">
-          Отправляйте личные фото и сообщения другу или группе
+        Отправляйте личные фото и сообщения другу или группе
         </p>
         <button
           className="bg-sky-600 text-[white] px-[15px] py-[5px] rounded-[10px]"
