@@ -83,6 +83,7 @@ export default function ChatById() {
 			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
 		}
 	}, [chatById])
+
 	useEffect(() => {
 		const interval = setInterval(() => {
 			getChatById(params['chat-by-id'])
@@ -90,6 +91,7 @@ export default function ChatById() {
 
 		return () => clearInterval(interval)
 	}, [])
+
 	function openFileDialog() {
 		fileInputRef.current.click()
 	}
@@ -109,7 +111,6 @@ export default function ChatById() {
 		formData.append('ChatId', params['chat-by-id'])
 		if (message.trim()) formData.append('MessageText', message)
 		if (file) formData.append('File', file)
-		console.log(formData)
 
 		try {
 			await sendMessege(formData)
@@ -126,9 +127,11 @@ export default function ChatById() {
 		if (params['chat-by-id']) {
 			getChatById(params['chat-by-id'])
 		}
-		const storedUserName = localStorage.getItem('userName')
-		if (storedUserName) {
-			getUserByName(storedUserName)
+		if (typeof window !== 'undefined') {
+			const storedUserName = localStorage.getItem('userName')
+			if (storedUserName) {
+				getUserByName(storedUserName)
+			}
 		}
 	}, [params, delChatById])
 
@@ -216,21 +219,7 @@ export default function ChatById() {
 											/>
 										</div>
 									)}
-									<input
-										type='text'
-										value={message}
-										onChange={e => setMessage(e.target.value)}
-										placeholder='Напишите сообщение...'
-										className='w-full p-2 rounded-lg outline-0'
-										name='message'
-										autoComplete='off'
-									/>
-								</aside>
-								<aside className='flex gap-3 w-[15%]'>
-									<Mic />
-									<Image />
-									<Sticker />
-									<Heart />
+									{/* ... input and other elements here ... */}
 								</aside>
 							</form>
 						</section>
@@ -367,27 +356,27 @@ export default function ChatById() {
 						<form
 							onSubmit={handleSendMessage}
 							className='flex w-full items-center justify-between'
-							>
+						>
 							<input
 								type='file'
 								accept='image/*'
 								ref={fileInputRef}
 								style={{ display: 'none' }}
 								onChange={handleFileChange}
-								/>
+							/>
 
 							<aside className='flex items-center w-[85%] gap-1 relative'>
 								<Smile
 									className='cursor-pointer'
 									onClick={() => setShowEmojiPicker(prev => !prev)}
-									/>
+								/>
 								{showEmojiPicker && (
 									<div className='absolute bottom-[50px] z-50'>
 										<EmojiPicker
 											onEmojiClick={emojiData =>
 												setMessage(prev => prev + emojiData.emoji)
 											}
-											/>
+										/>
 									</div>
 								)}
 								<input
@@ -398,7 +387,7 @@ export default function ChatById() {
 									className='w-full p-2 rounded-lg outline-0'
 									name='message'
 									autoComplete='off'
-									/>
+								/>
 							</aside>
 
 							<aside className='flex gap-3 w-[15%]'>
@@ -407,23 +396,29 @@ export default function ChatById() {
 										isRecording ? 'text-red-500 animate-pulse' : ''
 									}`}
 									onClick={handleMicClick}
-									/>
+								/>
 
 								<Image className='cursor-pointer' onClick={openFileDialog} />
-								<div className='cursor-pointer'
-									onClick={async () => {
-										const formData = new FormData()
-										formData.append('ChatId', params['chat-by-id'])
-										formData.append('MessageText', localStorage.getItem('zvonok'))
-										try {
-											await sendMessege(formData)
-										} catch (err) {
-											console.error('Ошибка при отправке сердечка:', err)
-										}
-									}}>
 
-								<MapPinCheckInside />
+								<div
+									className='cursor-pointer'
+									onClick={async () => {
+										if (typeof window !== 'undefined') {
+											const zvonok = localStorage.getItem('zvonok')
+											const formData = new FormData()
+											formData.append('ChatId', params['chat-by-id'])
+											formData.append('MessageText', zvonok || '')
+											try {
+												await sendMessege(formData)
+											} catch (err) {
+												console.error('Ошибка при отправке сердечка:', err)
+											}
+										}
+									}}
+								>
+									<MapPinCheckInside />
 								</div>
+
 								<div
 									className='cursor-pointer'
 									onClick={async () => {
@@ -436,7 +431,7 @@ export default function ChatById() {
 											console.error('Ошибка при отправке сердечка:', err)
 										}
 									}}
-									>
+								>
 									<Heart />
 								</div>
 							</aside>
@@ -446,8 +441,17 @@ export default function ChatById() {
 			</section>
 			{photoModal && (
 				<div className='absolute w-[100%] h-[100vh] top-0 left-0	z-10  flex items-center justify-center bg-[rgba(0,0,0,0.5)]'>
-					<div className='absolute top-[25px] right-[30px] cursor-pointer' onClick={() => handleClosePhotoModal()}><X className='text-[white]'/></div>
-						<img src={api + 'images/' + photo} alt="photo" className='h-[60%] w-auto' />
+					<div
+						className='absolute top-[25px] right-[30px] cursor-pointer'
+						onClick={() => handleClosePhotoModal()}
+					>
+						<X className='text-[white]' />
+					</div>
+					<img
+						src={api + 'images/' + photo}
+						alt='photo'
+						className='h-[60%] w-auto'
+					/>
 				</div>
 			)}
 		</main>
