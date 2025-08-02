@@ -321,12 +321,12 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
                 </Box>
                 {selectedPost?.postLikeCount === 0 ? (
                   <Typography sx={{ textAlign: "start" }} variant="body2" fontWeight="bold">
-                    Поставьте первую отметку "Нравится"!
+                    Поставьте первую отметку &quot;Нравится&quot;!
                   </Typography>
                 ) : (
                   <Typography variant="body2" fontWeight="bold">
                     {selectedPost?.postLikeCount + (isLiked !== selectedPost?.postLike ? (isLiked ? 1 : -1) : 0)}{" "}
-                    отметок "Нравится"
+                    отметок &quot;Нравится&quot;
                   </Typography>
                 )}
                 <Button
