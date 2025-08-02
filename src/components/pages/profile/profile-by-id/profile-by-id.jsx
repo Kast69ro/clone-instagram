@@ -10,7 +10,7 @@ import BasicTabsById from "../tabs-by-id/tabs";
 import StoryById from "../story-by-id/story";
 
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import { API } from "@/utils/config";
 
 const ComponentProfileById = ({ userId }) => {
@@ -19,16 +19,15 @@ const ComponentProfileById = ({ userId }) => {
     getFolowing,
     deleteFolowing,
     folowing,
-    postFolowing
+    postFolowing,
   } = useProfileStore();
 
-  const { getInfoById, infoById,getChat,chats } = useProfileByIdStore();
+  const { getInfoById, infoById, getChat, chats } = useProfileByIdStore();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [openFolowing, setOpenFolowing] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-
   const [myId, setMyId] = useState(null);
 
   useEffect(() => {
@@ -39,34 +38,28 @@ const ComponentProfileById = ({ userId }) => {
         setMyId(decoded.sid);
       }
     }
-    getChat()
-    
-  }, []);
- let chat = chats?.filter((el) => el.sendUserId == userId);
+    getChat();
+  }, [getChat]);
 
-if (chat && chat.length > 0) {
-}
-
+  const chat = chats?.filter((el) => el.sendUserId == userId);
 
   useEffect(() => {
     if (!myId) return;
     getFolowing(myId);
-  }, [myId]);
+  }, [myId, getFolowing]);
 
   useEffect(() => {
     if (!userId || !folowing) return;
 
-    const isSubscribed = folowing?.some((f) => f.userShortInfo.userId === userId) || false;
+    const isSubscribed =
+      folowing?.some((f) => f.userShortInfo.userId === userId) || false;
     setSubscribed(isSubscribed);
-    
   }, [userId, folowing]);
-  
-  
 
   useEffect(() => {
     if (!userId) return;
     getInfoById(userId);
-  }, [userId]);
+  }, [userId, getInfoById]);
 
   const showFolowers = () => {
     if (!userId) return;
@@ -82,32 +75,33 @@ if (chat && chat.length > 0) {
     setOpenFolowing(true);
   };
 
-const handleSubscribeToggle = async () => {
-  const newState = !subscribed;
-  setSubscribed(newState);
+  const handleSubscribeToggle = async () => {
+    const newState = !subscribed;
+    setSubscribed(newState);
 
-  try {
-    if (newState) {
-      await postFolowing(userId, myId);
-    } else {
-      await deleteFolowing(userId, myId);
+    try {
+      if (newState) {
+        await postFolowing(userId, myId);
+      } else {
+        await deleteFolowing(userId, myId);
+      }
+      await getInfoById(userId);
+    } catch (error) {
+      setSubscribed(!newState);
+      console.error("Ошибка:", error);
     }
-    await getInfoById(userId);
-  } catch (error) {
-    setSubscribed(!newState);
-    console.error("Ошибка:", error);
-  }
-};
-
+  };
 
   const openChat = () => {
-    router.push(`/chats/${chat[0].chatId}`);
-    
+    if (chat && chat.length > 0) {
+      router.push(`/chats/${chat[0].chatId}`);
+    } else {
+      alert("Чат с этим пользователем еще не создан.");
+    }
   };
 
   return (
     <>
- 
       <div className="w-full  px-4">
         <div className="w-full max-w-[900px] mx-auto flex sm:flex-row items-start sm:items-center gap-5 sm:gap-12 py-4">
           <div className="w-45 h-30 sm:w-42 sm:h-34 rounded-[50%] overflow-hidden border border-gray-300">
@@ -135,10 +129,10 @@ const handleSubscribeToggle = async () => {
               <span>
                 <strong>{infoById?.postCount || 0}</strong> posts
               </span>
-              <span onClick={showFolowers}>
+              <span onClick={showFolowers} className="hover:underline">
                 <strong>{infoById?.subscribersCount || 0}</strong> followers
               </span>
-              <span onClick={showFolowing}>
+              <span onClick={showFolowing} className="hover:underline">
                 <strong>{infoById?.subscriptionsCount || 0}</strong> following
               </span>
             </div>
@@ -148,7 +142,6 @@ const handleSubscribeToggle = async () => {
             </div>
           </div>
         </div>
-        
 
         <div className="max-w-[900px] flex items-center gap-4 py-3 justify-center">
           <button

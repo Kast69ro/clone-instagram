@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import {
   Modal,
@@ -10,28 +11,27 @@ import {
 import { X } from "lucide-react";
 import { API } from "@/utils/config";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import Link from "next/link";
 
 export default function FollowersMenu({ open, onClose }) {
   const { folowers, folowing, postFolowing, deleteFolowing } = useProfileStore();
   const [localFollowers, setLocalFollowers] = useState([]);
-
   const [decode, setDecode] = useState(null);
 
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    try {
-      const token = localStorage.getItem("access_token");
-      if (token) {
-        const decoded = jwtDecode(token);
-        setDecode(decoded);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (token) {
+          const decoded = jwtDecode(token);
+          setDecode(decoded);
+        }
+      } catch (e) {
+        console.error("Ошибка при декодировании токена:", e);
       }
-    } catch (e) {
-      console.error("Ошибка при декодировании токена:", e);
     }
-  }
-}, []);
+  }, []);
 
   useEffect(() => {
     if (open && folowers) {
@@ -45,27 +45,24 @@ useEffect(() => {
   }, [open, folowers, folowing]);
 
   const toggleFollow = async (userId, isCurrentlyFollowing) => {
-
     setLocalFollowers((prev) =>
-    prev.map((user) =>
-      user.userShortInfo.userId === userId
-        ? { ...user, isFollowing: !isCurrentlyFollowing }
-        : user
-    )
-  );
+      prev.map((user) =>
+        user.userShortInfo.userId === userId
+          ? { ...user, isFollowing: !isCurrentlyFollowing }
+          : user
+      )
+    );
 
-  try {
-    if (isCurrentlyFollowing) {
-      await deleteFolowing(userId,decode.sid);
-    } else {
-      await postFolowing(userId,decode.sid);
+    try {
+      if (isCurrentlyFollowing) {
+        await deleteFolowing(userId, decode.sid);
+      } else {
+        await postFolowing(userId, decode.sid);
+      }
+    } catch (error) {
+      console.error("Ошибка при смене подписки:", error);
     }
-  } catch (error) {
-    console.error("Ошибка при смене подписки:", error);
-
-    
-  }
-};
+  };
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -93,18 +90,18 @@ useEffect(() => {
 
               return (
                 <div key={user.userId} className="flex items-center justify-between">
-                  <Link href={`/profile/${user.userId}`}>
-                  <div className="flex items-center gap-3">
-                    <Avatar
-                      src={`${API}/images/${user.userPhoto}`}
-                      alt={user.userName}
-                      sx={{ width: 44, height: 44 }}
+                  <Link href={`/profile/${user.userId}`} passHref>
+                    <a className="flex items-center gap-3">
+                      <Avatar
+                        src={user.userPhoto ? `${API}/images/${user.userPhoto}` : undefined}
+                        alt={user.userName}
+                        sx={{ width: 44, height: 44 }}
                       />
-                    <Typography className="text-sm font-medium">
-                      {user.userName}
-                    </Typography>
-                  </div>
-                      </Link>
+                      <Typography className="text-sm font-medium">
+                        {user.userName}
+                      </Typography>
+                    </a>
+                  </Link>
 
                   <Button
                     onClick={() => toggleFollow(user.userId, isFollowing)}

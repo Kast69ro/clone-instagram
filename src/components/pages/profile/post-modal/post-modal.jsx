@@ -4,20 +4,14 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
-import BackspaceIcon from '@mui/icons-material/Backspace';
+import BackspaceIcon from "@mui/icons-material/Backspace";
 import { API } from "@/utils/config";
 import Profile from "@/assets/icon/layout/instagramDefaultProfile.jpg";
-import {useProfileStore } from "@/store/pages/profile/profile/store-profile";
+import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
 import {jwtDecode} from "jwt-decode";
 
 export default function PostModal({ post, onClose }) {
-  const {
-    likePost,
-    addComment,
-    currentUser,
-    deleteComment,
-    deletePost, 
-  } = useProfileStore();
+  const { likePost, addComment, currentUser, deleteComment, deletePost } = useProfileStore();
 
   const token = localStorage.getItem("access_token");
   const myId = token ? jwtDecode(token)?.sid : null;
@@ -71,13 +65,10 @@ export default function PostModal({ post, onClose }) {
       }}
     >
       <div className="relative bg-white flex max-w-5xl w-full rounded-xl overflow-hidden shadow-lg">
+        {/* Медиа часть (изображение или видео) */}
         <div className="flex-1 min-w-0 flex items-center justify-center max-h-[90vh]">
           {post.images[0]?.endsWith(".mp4") ? (
-            <video
-              controls
-              autoPlay
-              className="max-h-full max-w-full object-contain"
-            >
+            <video controls autoPlay className="max-h-full max-w-full object-contain">
               <source src={`${API}/images/${post.images[0]}`} type="video/mp4" />
             </video>
           ) : (
@@ -89,6 +80,7 @@ export default function PostModal({ post, onClose }) {
           )}
         </div>
 
+        {/* Правая панель с инфо, комментариями и кнопками */}
         <div className="w-[400px] flex flex-col border-l border-gray-300 max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between p-4 border-b">
             <div className="flex items-center gap-2">
@@ -111,15 +103,12 @@ export default function PostModal({ post, onClose }) {
             </div>
           </div>
 
+          {/* Комментарии */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {comments.map((c) => {
-              const displayName =
-                c.userName === currentUser?.userName ? "Вы" : c.userName;
+              const displayName = c.userName === currentUser?.userName ? "Вы" : c.userName;
               return (
-                <div
-                  key={c.postCommentId}
-                  className="flex items-start justify-between gap-3"
-                >
+                <div key={c.postCommentId} className="flex items-start justify-between gap-3">
                   <div className="flex gap-3">
                     <Avatar
                       src={c.userImage ? `${API}/images/${c.userImage}` : Profile}
@@ -144,6 +133,7 @@ export default function PostModal({ post, onClose }) {
             })}
           </div>
 
+          {/* Добавление комментария и лайк */}
           <div className="border-t p-4 space-y-3">
             <div className="flex items-center gap-3">
               <IconButton onClick={handleLike} color="error">

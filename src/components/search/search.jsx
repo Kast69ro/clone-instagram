@@ -1,4 +1,3 @@
-
 'use client'
 
 import Box from '@mui/material/Box'
@@ -15,12 +14,33 @@ import Skeleton from '@mui/material/Skeleton'
 import { useRouter } from 'next/navigation'
 
 export default function TemporaryDrawer() {
-  const { isOpen, toggleDrawer, searchUser, datas, postSearchHistory, getSearchHistory, history, deleteSearchHistory, clearSearchHistory, loading, closeDrawer } = useDrawerStore()
+  const {
+    isOpen,
+    toggleDrawer,
+    searchUser,
+    datas,
+    postSearchHistory,
+    getSearchHistory,
+    history,
+    deleteSearchHistory,
+    clearSearchHistory,
+    loading,
+    closeDrawer,
+  } = useDrawerStore()
 
   const [search, setSearch] = useState('')
   const route = useRouter()
-  const theme = localStorage.getItem('theme')
 
+  // Инициализируем theme в состоянии с дефолтным значением
+  const [theme, setTheme] = useState('light')
+
+  useEffect(() => {
+    // Безопасно получить theme из localStorage только на клиенте
+    if (typeof window !== 'undefined') {
+      const storedTheme = localStorage.getItem('theme')
+      setTheme(storedTheme || 'light')
+    }
+  }, [])
 
   function handleSearch(e) {
     searchUser(e.target.value)
@@ -38,28 +58,32 @@ export default function TemporaryDrawer() {
     closeDrawer()
   }
 
-
-
   useEffect(() => {
-  if (isOpen) {
-    getSearchHistory()
-  }
-}, [isOpen, getSearchHistory])
-
+    if (isOpen) {
+      getSearchHistory()
+    }
+  }, [isOpen, getSearchHistory])
 
   const DrawerList = (
     <Box
-      sx={{ width: 420, backgroundColor: theme == 'dark' ? '#121212' : 'white', color: theme == 'dark' ? 'white' : 'black' }}
+      sx={{
+        width: 420,
+        backgroundColor: theme === 'dark' ? '#121212' : 'white',
+        color: theme === 'dark' ? 'white' : 'black',
+      }}
       role="presentation"
     >
-      <div className='px-4'>
-        <h1 className='text-[25px] mb-8 mt-5'>Поисковый запрос</h1>
+      <div className="px-4">
+        <h1 className="text-[25px] mb-8 mt-5">Поисковый запрос</h1>
 
-        <div className='rounded-[5px] px-3 bg-[#EFEFEF] flex items-center'>
+        <div className="rounded-[5px] px-3 bg-[#EFEFEF] flex items-center">
           <SearchIcon sx={{ color: 'black' }} />
           <input
             value={search}
-            onChange={(e) => { setSearch(e.target.value); handleSearch(e) }}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              handleSearch(e)
+            }}
             type="search"
             id="customSearchInput"
             placeholder="поиск"
@@ -69,75 +93,107 @@ export default function TemporaryDrawer() {
       </div>
       <Divider sx={{ margin: '25px 0px' }} />
 
-      <div className='px-4'>
-        <div className='flex justify-between'>
-          <h2 className='text-[17px] mb-5'>Недавнее</h2>
-          <button onClick={clearSearchHistory} className='bg-transparent text-[17px] mb-5 text-[#0095F6] hover:text-black'>Очистить все</button>
-
-
+      <div className="px-4">
+        <div className="flex justify-between">
+          <h2 className="text-[17px] mb-5">Недавнее</h2>
+          <button
+            onClick={clearSearchHistory}
+            className="bg-transparent text-[17px] mb-5 text-[#0095F6] hover:text-black"
+          >
+            Очистить все
+          </button>
         </div>
-        <div className='flex flex-col gap-5 ' style={{ backgroundColor: theme == 'dark' ? '#121212' : 'white' }}>
-
-          {
-            loading
-              ?
-              <div className="flex items-center gap-5">
+        <div
+          className="flex flex-col gap-5"
+          style={{ backgroundColor: theme === 'dark' ? '#121212' : 'white' }}
+        >
+          {loading ? (
+            <div className="flex items-center gap-5">
+              <Skeleton
+                variant="circular"
+                width={60}
+                height={60}
+                sx={{ bgcolor: 'grey.300' }}
+              />
+              <div className="flex flex-col gap-2">
                 <Skeleton
-                  variant="circular"
-                  width={60}
-                  height={60}
+                  variant="text"
+                  width={120}
+                  height={24}
                   sx={{ bgcolor: 'grey.300' }}
                 />
-                <div className="flex flex-col gap-2">
-                  <Skeleton
-                    variant="text"
-                    width={120}
-                    height={24}
-                    sx={{ bgcolor: 'grey.300' }}
-                  />
-                  <Skeleton
-                    variant="text"
-                    width={200}
-                    height={20}
-                    sx={{ bgcolor: 'grey.300' }}
-                  />
+                <Skeleton
+                  variant="text"
+                  width={200}
+                  height={20}
+                  sx={{ bgcolor: 'grey.300' }}
+                />
+              </div>
+            </div>
+          ) : search === '' && history.length === 0 ? (
+            <p className="text-[#737373] m-auto mt-[200px] mb-[242px]">
+              Нет недавних запросов.
+            </p>
+          ) : search !== '' ? (
+            datas?.map((user) => (
+              <div
+                key={user.id}
+                className="flex items-center gap-5 cursor-pointer"
+                onClick={() => handleClick(user.id)}
+              >
+                <Image
+                  src={user.avatar !== '' ? `${API}/images/${user.avatar}` : ava}
+                  alt="avatar"
+                  width={70}
+                  height={80}
+                  className="rounded-[50%] w-[60px] h-[60px]"
+                />
+                <div>
+                  <h2>{user.userName}</h2>
+                  <h3 className="text-[#9E9E9E]">
+                    {user.fullName} . Подписчики {user.subscribersCount}
+                  </h3>
                 </div>
               </div>
-              :
-              ((search === '' && history.length === 0) ? <p className='text-[#737373] m-auto mt-[200px] mb-[242px]'>Нет недавних запросов.</p> :
-                search !== '' ?
-                  datas?.map((user) => (
-                    <div key={user.id} className='flex items-center gap-5' onClick={() => handleClick(user.id)}>
-                      <Image src={user.avatar !== '' ? `${API}/images/${user.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
-                      <div>
-                        <h2>{user.userName}</h2>
-                        <h3 className='text-[#9E9E9E]'>{user.fullName} . Подписчики {user.subscribersCount}</h3>
-                      </div>
-
-                    </div>
-
-                  )) :
-                  history?.map((el) => (
-                    <div key={el.id} className='flex items-center justify-between' style={{ marginBottom: theme == 'dark' ? '406px' : '0px' }}>
-                      {console.log('GGXXX ', el)}
-                      <div className='flex items-center  gap-6' onClick={() => byIdFunc(el.users.id)} >
-                        <Image src={el.users.avatar !== '' ? `${API}/images/${el.users.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
-                        <div>
-                          <h2>{el.users.userName}</h2>
-                          <h3 className='text-[#9E9E9E]'>{el.users.fullName} . Подписчики {el.users.subscribersCount}</h3>
-                        </div>
-                      </div>
-                      <ClearIcon onClick={() => deleteSearchHistory(el.id)} />
-                    </div>
-                  )))
-
-          }
+            ))
+          ) : (
+            history?.map((el) => (
+              <div
+                key={el.id}
+                className="flex items-center justify-between"
+                style={{ marginBottom: theme === 'dark' ? '406px' : '0px' }}
+              >
+                <div
+                  className="flex items-center gap-6 cursor-pointer"
+                  onClick={() => byIdFunc(el.users.id)}
+                >
+                  <Image
+                    src={
+                      el.users.avatar !== ''
+                        ? `${API}/images/${el.users.avatar}`
+                        : ava
+                    }
+                    alt="avatar"
+                    width={70}
+                    height={80}
+                    className="rounded-[50%] w-[60px] h-[60px]"
+                  />
+                  <div>
+                    <h2>{el.users.userName}</h2>
+                    <h3 className="text-[#9E9E9E]">
+                      {el.users.fullName} . Подписчики {el.users.subscribersCount}
+                    </h3>
+                  </div>
+                </div>
+                <ClearIcon
+                  className="cursor-pointer"
+                  onClick={() => deleteSearchHistory(el.id)}
+                />
+              </div>
+            ))
+          )}
         </div>
-
       </div>
-
-
-
     </Box>
   )
 

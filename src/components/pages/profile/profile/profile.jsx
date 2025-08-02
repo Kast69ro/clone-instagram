@@ -1,8 +1,9 @@
 "use client";
+
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Stories from "../story/story";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import BasicTabs from "../tabs/tabs";
 import Link from "next/link";
 import FollowersMenu from "../folowers/folowers";
@@ -16,8 +17,7 @@ import { useRouter } from "next/navigation";
 import { API } from "@/utils/config";
 
 const Profiles = () => {
-  const { getInfo, info, getStories, getFolowers, getFolowing } =
-    useProfileStore();
+  const { getInfo, info, getStories, getFolowers, getFolowing } = useProfileStore();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -34,7 +34,7 @@ const Profiles = () => {
     setDecode(decoded);
     getInfo(decoded.sid);
     getStories(decoded.sid);
-  }, []);
+  }, [getInfo, getStories]);
 
   const showFolowers = () => {
     if (!decode) return;
@@ -52,15 +52,18 @@ const Profiles = () => {
 
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
+
   const handleLogout = () => {
     handleMenuClose();
     localStorage.removeItem("access_token");
     router.push("/login");
   };
+
   const handleShowQr = () => {
     setQrOpen(true);
     handleMenuClose();
   };
+
   const handleQrClose = () => setQrOpen(false);
 
   return (
@@ -99,6 +102,7 @@ const Profiles = () => {
               <div
                 onClick={handleMenuOpen}
                 className="cursor-pointer text-xl sm:text-2xl hidden sm:block"
+                aria-label="Open menu"
               >
                 ☰
               </div>
@@ -125,13 +129,12 @@ const Profiles = () => {
             {info?.firstName && (
               <div className="mt-3 font-medium text-sm">{info.firstName}</div>
             )}
-           
           </div>
-          
         </div>
-         {info?.about && (
-              <div className="w-[700px] ml-[12%] break-words">{info.about}</div>
-            )}
+
+        {info?.about && (
+          <div className="w-[700px] ml-[12%] break-words">{info.about}</div>
+        )}
 
         <div className="max-w-[900px] mx-auto mb-6">
           <Stories />
@@ -142,10 +145,7 @@ const Profiles = () => {
       </div>
 
       <FollowersMenu open={open} onClose={() => setOpen(false)} />
-      <FollowingMenu
-        open={openFolowing}
-        onClose={() => setOpenFolowing(false)}
-      />
+      <FollowingMenu open={openFolowing} onClose={() => setOpenFolowing(false)} />
 
       <Menu
         anchorEl={anchorEl}

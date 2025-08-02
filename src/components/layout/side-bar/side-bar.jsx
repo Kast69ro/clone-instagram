@@ -26,7 +26,7 @@ import {
 
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
 import { API } from "@/utils/config";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { useDrawerStore } from "@/store/search/searchStore";
 import CreatePostModal from "@/components/createPost/createpost";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";

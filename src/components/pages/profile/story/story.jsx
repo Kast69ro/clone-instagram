@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
@@ -10,19 +10,20 @@ import { jwtDecode } from "jwt-decode";
 const StoriesLib = dynamic(() => import("react-insta-stories"), { ssr: false });
 
 export default function StoryViewer() {
-  const { getStories, story, likeStory,deleteStories } = useProfileStore();
+  const { getStories, story, likeStory, deleteStories } = useProfileStore();
   const [show, setShow] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
-  
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      const decoded = jwtDecode(token);
-      getStories(decoded.sid);
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        const decoded = jwtDecode(token);
+        getStories(decoded.sid);
+      }
     }
-  }, []);
+  }, [getStories]);
 
   useEffect(() => {
     if (story?.userId) {
@@ -31,7 +32,6 @@ export default function StoryViewer() {
   }, [story]);
 
   const toggleLike = (id) => {
-    
     setCurrentUser((prev) => {
       const updatedStories = prev.stories.map((s) => {
         if (s.id === id) {
@@ -44,14 +44,13 @@ export default function StoryViewer() {
         }
         return s;
       });
-
       return { ...prev, stories: updatedStories };
     });
-
     likeStory(id);
   };
 
   const deleteStory = (id) => {
+    if (!currentUser?.stories) return;
     const updated = currentUser.stories.filter((s) => s.id !== id);
     setCurrentUser((prev) => ({ ...prev, stories: updated }));
     if (updated.length === 0) {
@@ -59,11 +58,11 @@ export default function StoryViewer() {
     } else {
       setCurrentIndex(0);
     }
-    deleteStories(id)
+    deleteStories(id);
   };
 
   const formattedStories = useMemo(() => {
-    if (!currentUser) return [];
+    if (!currentUser?.stories) return [];
 
     return currentUser.stories.map((s) => ({
       content: () => (
@@ -73,7 +72,6 @@ export default function StoryViewer() {
             alt="story"
             className="object-contain w-full h-full"
           />
-
           <div className="absolute top-4 left-4 flex items-center gap-2 text-white">
             <img
               src={`${API}/images/${currentUser.userImage}`}
@@ -92,7 +90,7 @@ export default function StoryViewer() {
   return currentUser ? (
     <div className="p-4">
       <div className="flex gap-4 overflow-x-auto scrollbar-hide px-2">
-        {currentUser.stories.map((s, index) => {
+        {currentUser?.stories?.map((s, index) => {
           const isActive = index === currentIndex && show;
 
           return (

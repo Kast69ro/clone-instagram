@@ -9,13 +9,8 @@ import Profile from "@/assets/icon/layout/instagramDefaultProfile.jpg";
 import {jwtDecode} from "jwt-decode";
 import { useProfileByIdStore } from "@/store/pages/profile/profile-by-id/store-by-id";
 
-export default function PostModalById({ post, onClose,id }) {
-  const {
-    likePost,
-    addComment,
-    currentUser,
-    deleteComment,
-  } = useProfileByIdStore();
+export default function PostModalById({ post, onClose, id }) {
+  const { likePost, addComment, currentUser, deleteComment } = useProfileByIdStore();
 
   const token = localStorage.getItem("access_token");
   const myId = token ? jwtDecode(token)?.sid : null;
@@ -36,22 +31,19 @@ export default function PostModalById({ post, onClose,id }) {
     setComments((prev) => [...prev, createComment]);
     setNewComment("");
 
-    addComment(createComment,id);
+    addComment(createComment, id);
   };
 
   const handleLike = () => {
     setLiked(!liked);
     setLikes((prev) => prev + (liked ? -1 : 1));
-    likePost(post.postId,id);
+    likePost(post.postId, id);
   };
 
   const handleDeleteComment = (commentId) => {
-    
     setComments((prev) => prev.filter((c) => c.postCommentId !== commentId));
-    deleteComment(commentId,id);
+    deleteComment(commentId, id);
   };
-
-  
 
   return (
     <div
@@ -91,18 +83,14 @@ export default function PostModalById({ post, onClose,id }) {
               <span className="font-semibold">{post.userName}</span>
             </div>
 
-            <div className="flex items-center gap-1">
-              
-              <IconButton onClick={onClose} size="small">
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </div>
+            <IconButton onClick={onClose} size="small">
+              <CloseIcon fontSize="small" />
+            </IconButton>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {comments.map((c) => {
-              const displayName =
-                c.userName === currentUser?.userName ? "Вы" : c.userName;
+              const displayName = c.userName === currentUser?.userName ? "Вы" : c.userName;
               return (
                 <div
                   key={c.postCommentId}
