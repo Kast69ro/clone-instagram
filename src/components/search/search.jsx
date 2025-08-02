@@ -3,26 +3,15 @@
 
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
-import List from '@mui/material/List'
 import Divider from '@mui/material/Divider'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import MailIcon from '@mui/icons-material/Mail'
 import { useDrawerStore } from '@/store/search/searchStore'
-import { InputAdornment, TextField } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import { useEffect, useState } from 'react'
-import { Diversity2Outlined } from '@mui/icons-material'
 import Image from 'next/image'
 import { API } from '@/utils/config'
 import ava from '@/assets/img/pages/profile/profile/ava.jpeg'
 import ClearIcon from '@mui/icons-material/Clear'
 import Skeleton from '@mui/material/Skeleton'
-import Stack from '@mui/material/Stack'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export default function TemporaryDrawer() {
@@ -52,10 +41,11 @@ export default function TemporaryDrawer() {
 
 
   useEffect(() => {
-    if (isOpen) {
-      getSearchHistory()
-    }
-  }, [search, isOpen])
+  if (isOpen) {
+    getSearchHistory()
+  }
+}, [isOpen, getSearchHistory])
+
 
   const DrawerList = (
     <Box
@@ -69,7 +59,7 @@ export default function TemporaryDrawer() {
           <SearchIcon sx={{ color: 'black' }} />
           <input
             value={search}
-            onChange={(e) => { setSearch(e.target.value), handleSearch(e) }}
+            onChange={(e) => { setSearch(e.target.value); handleSearch(e) }}
             type="search"
             id="customSearchInput"
             placeholder="поиск"

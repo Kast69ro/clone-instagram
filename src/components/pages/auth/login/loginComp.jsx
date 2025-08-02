@@ -116,7 +116,7 @@ export default function LoginComp() {
 					</div>
 
 					<div className='text-center mt-6 border-t pt-4 text-sm text-gray-600'>
-						Don't have an account?
+						Don&quot;t have an account?
 						<Link href='/registration' className='text-blue-600 font-medium hover:underline'>
 							Sign up
 						</Link>

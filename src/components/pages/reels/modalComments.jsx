@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import React from "react"
+import React from "react";
 import {
   Box,
   Typography,
@@ -16,8 +16,8 @@ import {
   InputAdornment,
   Link,
   Stack,
-} from "@mui/material"
-import { X, Heart, Smile } from "lucide-react"
+} from "@mui/material";
+import { X, Heart, Smile } from "lucide-react";
 
 const comments = [
   {
@@ -83,7 +83,7 @@ const comments = [
     repliesCount: 0,
     avatarSrc: "/placeholder.svg?height=32&width=32",
   },
-]
+];
 
 export default function CommentsPage() {
   return (
@@ -141,10 +141,18 @@ export default function CommentsPage() {
                   <ListItemText
                     primary={
                       <Stack direction="row" alignItems="center" spacing={0.5}>
-                        <Typography component="span" variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                        <Typography
+                          component="span"
+                          variant="subtitle2"
+                          sx={{ fontWeight: "bold" }}
+                        >
                           {comment.username}
                         </Typography>
-                        <Typography component="span" variant="body2" color="text.secondary">
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.secondary"
+                        >
                           {comment.time}
                         </Typography>
                       </Stack>
@@ -159,11 +167,22 @@ export default function CommentsPage() {
                         >
                           {comment.text}
                         </Typography>
-                        <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          spacing={1}
+                          sx={{ mt: 1 }}
+                        >
                           <Typography variant="caption" color="text.secondary">
-                            Отметки "Нравится": {comment.likes.toLocaleString()}
+                            Отметки &quot;Нравится&quot;:{" "}
+                            {comment.likes.toLocaleString()}
                           </Typography>
-                          <Link href="#" variant="caption" color="text.secondary" underline="none">
+                          <Link
+                            href="#"
+                            variant="caption"
+                            color="text.secondary"
+                            underline="none"
+                          >
                             Ответить
                           </Link>
                         </Stack>
@@ -181,7 +200,11 @@ export default function CommentsPage() {
                       </React.Fragment>
                     }
                   />
-                  <IconButton aria-label="like" size="small" sx={{ alignSelf: "flex-start", mt: 0.5 }}>
+                  <IconButton
+                    aria-label="like"
+                    size="small"
+                    sx={{ alignSelf: "flex-start", mt: 0.5 }}
+                  >
                     <Heart size={16} />
                   </IconButton>
                 </ListItem>
@@ -202,7 +225,11 @@ export default function CommentsPage() {
             gap: 1,
           }}
         >
-          <Avatar alt="User Avatar" src="/placeholder.svg?height=32&width=32" sx={{ width: 32, height: 32 }} />
+          <Avatar
+            alt="User Avatar"
+            src="/placeholder.svg?height=32&width=32"
+            sx={{ width: 32, height: 32 }}
+          />
           <TextField
             fullWidth
             variant="outlined"
@@ -228,5 +255,5 @@ export default function CommentsPage() {
         </Box>
       </Paper>
     </main>
-  )
+  );
 }

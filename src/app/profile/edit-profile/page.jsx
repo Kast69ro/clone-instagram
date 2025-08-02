@@ -149,7 +149,7 @@ const [originalImage, setOriginalImage] = useState("");
             <MenuItem value="0">Female</MenuItem>
           </Select>
           <Typography className="text-sm text-gray-500 -mt-1">
-            This won't be part of your public profile.
+            This won&quot;t be part of your public profile.
           </Typography>
 
           <Button
