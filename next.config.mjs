@@ -1,5 +1,5 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export", // 👈 добавь эту строку
   i18n: {
     locales: ["en", "tj"],
     defaultLocale: "en",
