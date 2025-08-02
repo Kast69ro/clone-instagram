@@ -1,5 +1,4 @@
 const nextConfig = {
-  output: "export", // статический экспорт
   // i18n: {
   //   locales: ["en", "tj"],
   //   defaultLocale: "en",
