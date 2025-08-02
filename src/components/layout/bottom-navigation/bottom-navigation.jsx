@@ -14,7 +14,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile"
 import { API } from "@/utils/config"
-import jwtDecode from "jwt-decode"
+import {jwtDecode} from "jwt-decode"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"

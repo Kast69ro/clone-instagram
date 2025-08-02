@@ -29,7 +29,7 @@ import {
   videoActive,
 } from "@/assets/icon/layout/svg";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { API } from "@/utils/config";
 import { useDrawerStore } from "@/store/search/searchStore";
 import CreatePostModal from "@/components/createPost/createpost";

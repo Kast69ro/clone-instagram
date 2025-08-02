@@ -11,7 +11,7 @@ import {
 import { X } from "lucide-react";
 import { API } from "@/utils/config";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import Link from "next/link";
 
 export default function FollowingMenu({ open, onClose }) {

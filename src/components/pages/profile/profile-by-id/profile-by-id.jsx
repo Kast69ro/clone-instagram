@@ -10,7 +10,7 @@ import BasicTabsById from "../tabs-by-id/tabs";
 import StoryById from "../story-by-id/story";
 
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { API } from "@/utils/config";
 
 const ComponentProfileById = ({ userId }) => {
