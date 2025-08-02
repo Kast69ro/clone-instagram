@@ -1,5 +1,5 @@
 const nextConfig = {
-  output: "export", // 👈 добавь эту строку
+  output: "export", // статический экспорт
   // i18n: {
   //   locales: ["en", "tj"],
   //   defaultLocale: "en",
@@ -7,6 +7,7 @@ const nextConfig = {
   // },
   images: {
     domains: ["37.27.29.18", "instagram-api.softclub.tj"],
+    unoptimized: true,  // Отключает оптимизацию изображений при экспорте
   },
 };
 
