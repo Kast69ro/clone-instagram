@@ -743,12 +743,14 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
               </Box>
               {selectedPost?.postLikeCount === 0 ? (
                 <Typography sx={{ textAlign: "start" }} variant="body2" color="text.primary">
-                  Поставьте первую отметку "Нравится"!
+                  <p>Поставьте первую отметку &quot;Нравится&quot;!</p>
+
                 </Typography>
               ) : (
                 <Typography variant="body2" fontWeight="bold">
                   {selectedPost?.postLikeCount + (isLiked !== selectedPost?.postLike ? (isLiked ? 1 : -1) : 0)} отметок
-                  "Нравится"
+                  <p> &quot;Нравится&quot;</p>
+
                 </Typography>
               )}
               <Typography variant="caption" color="text.secondary">
